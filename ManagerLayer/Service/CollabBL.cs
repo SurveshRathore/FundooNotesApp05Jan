@@ -24,9 +24,9 @@ namespace ManagerLayer.Service
             {
                 return this.CollabInterfaceRL.AddNewCollab(UserId, NoteId, Email);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
 
         }
@@ -36,9 +36,9 @@ namespace ManagerLayer.Service
             {
                 return this.CollabInterfaceRL.GetAllCollab(NoteId);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
         public bool RemoveCollab(long CollabId)
@@ -47,9 +47,9 @@ namespace ManagerLayer.Service
             {
                 return this.CollabInterfaceRL.RemoveCollab(CollabId);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
     }

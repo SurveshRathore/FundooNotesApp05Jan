@@ -14,5 +14,10 @@ namespace RepoLayer.Interface
         public string userLogin(UserLogin uLogin);
         public string userPasswordFoget(string emailID);
         public bool userPasswordReset(string emailID, string password, string confirmPassword);
+
+        public string userPasswordFogetByRabbitMQ(string emailID);
+        public List<UserTable> GetAllUser();
+
+        
     }
 }

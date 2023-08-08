@@ -1,4 +1,5 @@
-﻿using CommonLayer.Models;
+﻿using CommonLayer.Model;
+using CommonLayer.Models;
 using ManagerLayer.Interface;
 using Microsoft.AspNetCore.Http;
 using RepoLayer.Entity;
@@ -46,6 +47,18 @@ namespace ManagerLayer.Service
             }
         }
 
+        public NoteTable UpdateColor(long NoteId, string color)
+        {
+            try
+            {
+                return this.noteInterfaceRL.UpdateColor(NoteId, color);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
         public bool UpdateNotes(long NoteId, long UserId, NotesModel notesModel)
         {
             try
@@ -92,28 +105,18 @@ namespace ManagerLayer.Service
             }
         }
         
-        public bool DeleteNote(long UserId, long NoteId)
+        public bool DeleteNote( long NoteId)
         {
             try
             {
-                return this.noteInterfaceRL.DeleteNote(UserId, NoteId);
+                return this.noteInterfaceRL.DeleteNote( NoteId);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public NoteTable UpdateColor(long NoteId, string Color)
-        {
-            try
-            {
-                return this.noteInterfaceRL.UpdateColor(NoteId, Color);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        
 
         public string UploadImage(long NoteId, long UserId, IFormFile img)
         {
@@ -126,6 +129,71 @@ namespace ManagerLayer.Service
                 throw ex;
             }
 
+        }
+
+        public List<NoteTable> searchNote(string query)
+        {
+            try
+            {
+                return this.noteInterfaceRL.searchNote(query);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public int GetNoteCount(int userId)
+        {
+            try
+            {
+                return this.noteInterfaceRL.GetNoteCount(userId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public int ColorNoteCount(int userId)
+        {
+            try
+            {
+                return this.noteInterfaceRL.ColorNoteCount(userId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public int CountTrashNote(int userId)
+        {
+            try
+            {
+                return this.noteInterfaceRL.CountTrashNote(userId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public CountModel NoteAllCount(int userId)
+        {
+            try
+            {
+                return this.noteInterfaceRL.NoteAllCount(userId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
     }

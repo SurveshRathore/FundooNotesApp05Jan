@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace RepoLayer.Service
 {
-    public class UserRL: IUserRL
+    public class UserRL : IUserRL
     {
 
         private readonly FundooDBContext fundooDBContext;
@@ -36,10 +36,10 @@ namespace RepoLayer.Service
                 userTable.EmailId = userRegistration.EmailId;
                 userTable.Password = EncryptPass(userRegistration.Password);
 
-                fundooDBContext.Add(userTable);
+                fundooDBContext.UserTable.Add(userTable);
                 int result = fundooDBContext.SaveChanges();
 
-                if(result > 0)
+                if (result > 0)
                 {
                     return userTable;
                 }
@@ -48,28 +48,63 @@ namespace RepoLayer.Service
                     return null;
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 throw;
             }
-            
+
         }
 
-        public string userLogin (UserLogin uLogin)
+        //public string userLogin (UserLogin uLogin)
+        //{
+        //    try
+        //    {
+        //        UserTable userTable = new UserTable();
+        //        var result = this.fundooDBContext.UserTable.FirstOrDefault(ud => ud.EmailId == uLogin.EmailId && ud.Password == EncryptPass(uLogin.Password));
+        //        if(result != null)
+        //        {
+        //            var token = this.GenerateJwtToken(result.EmailId, result.userId);
+        //            return token;
+        //        }
+        //        else
+        //        {
+        //            return null;
+        //        }
+
+        //        // var result = this.fundooDBContext.UserTable.FirstOrDefault(ud => ud.EmailId == uLogin.EmailId && ud.Password == EncryptPass(uLogin.Password));
+        //        // userTable = this.fundooDBContext.UserTable.FirstOrDefault(ud=>ud.EmailId== uLogin.EmailId && ud.Password== EncryptPass(uLogin.Password));
+        //        if (result != null)
+        //        {
+        //            //ConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect("127.0.0.1:6379");
+        //            //IDatabase database = connectionMultiplexer.GetDatabase();
+        //            //database.StringSet(key: "FirstName", userTable.FirstName);
+        //            //database.StringSet(key: "LastName", userTable.LastName);
+        //            //database.StringSet(key: "UserId", userTable.userId.ToString());
+
+        //            string encrytPass = EncryptPass(uLogin.Password);
+        //            var token = this.GenerateJwtToken(uLogin.EmailId, userTable.userId);
+        //            return token;
+        //        }
+        //        else
+        //        {
+        //            return null;
+        //        }
+
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
+
+        public string userLogin(UserLogin uLogin)
         {
             try
             {
                 UserTable userTable = new UserTable();
-                var result = this.fundooDBContext.UserTable.FirstOrDefault(ud => ud.EmailId == uLogin.EmailId && ud.Password == EncryptPass(uLogin.Password));
-                //userTable = this.fundooDBContext.UserTable.FirstOrDefault(ud=>ud.EmailId== uLogin.EmailId && ud.Password== EncryptPass(uLogin.Password));
-                if (userTable != null) 
+                userTable = this.fundooDBContext.UserTable.FirstOrDefault(ud => ud.EmailId == uLogin.EmailId && ud.Password == EncryptPass(uLogin.Password));
+                if (userTable != null)
                 {
-                    ConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect("127.0.0.1:6379");
-                    IDatabase database = connectionMultiplexer.GetDatabase();
-                    database.StringSet(key: "FirstName", userTable.FirstName);
-                    database.StringSet(key: "LastName", userTable.LastName);
-                    database.StringSet(key: "UserId", userTable.userId.ToString());
-                    string encrytPass = EncryptPass(uLogin.Password);
                     var token = this.GenerateJwtToken(uLogin.EmailId, userTable.userId);
                     return token;
                 }
@@ -85,11 +120,13 @@ namespace RepoLayer.Service
             }
         }
 
+
+
         public string userPasswordFoget(string emailID)
         {
             try
             {
-                
+
                 var result = this.fundooDBContext.UserTable.FirstOrDefault(ue => ue.EmailId == emailID);
                 if (result != null)
                 {
@@ -120,7 +157,7 @@ namespace RepoLayer.Service
                     var user = fundooDBContext.UserTable.Where(ue => ue.EmailId == emailID).FirstOrDefault();
                     user.Password = EncryptPass(confirmPassword);
                     fundooDBContext.SaveChanges();
-                    
+
                     return true;
                 }
                 else
@@ -148,7 +185,7 @@ namespace RepoLayer.Service
                     new Claim(ClaimTypes.Email, emailID),
                     new Claim("userID",userID.ToString())
                     }),
-                    Expires = DateTime.UtcNow.AddHours(1),
+                    Expires = DateTime.UtcNow.AddHours(5),
 
                     SigningCredentials = new SigningCredentials(userKey, SecurityAlgorithms.HmacSha256Signature)
                 };
@@ -177,5 +214,69 @@ namespace RepoLayer.Service
             }
 
         }
+
+
+        public List<UserTable> GetAllUser()
+        {
+            try
+            {
+                var allUser = this.fundooDBContext.UserTable.ToList();
+
+                if (allUser != null)
+                {
+                    return allUser;
+                }
+                else
+                    return null;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        string IUserRL.userPasswordFogetByRabbitMQ(string emailID)
+        {
+            throw new NotImplementedException();
+        }
+
+        //public async string userPasswordFogetByRabbitMQ(string emailID) {
+        //    try
+        //    {
+        //        var result = fundooDBContext.UserTable.FirstOrDefault(ut => ut.EmailId == emailID);
+
+        //        if (result != null)
+        //        {
+        //            RabbitMQ rabbitMQ = new RabbitMQ();
+        //            var token = GenerateJwtToken(result.EmailId, result.userId);
+        //            rabbitMQ.SendMail(emailID, token);
+
+        //Uri uri = new Uri("rabbitmq://localhost/FundoNotesEmail_Queue");
+        //var endPoint = await _bus.GetSendEndpoint(uri);
+        //await endPoint.
+
+        //     await endPoint.Send(forgotPasswordModel);
+        //    return Ok(new ResponseModel<string> { Success = true, Message = "email send succesfull", Data = email });
+        //}
+        //return BadRequest(new ResponseModel<string>
+        //{
+        //    Success = true,
+        //    Message = "email send succesfull",
+        //    Data = email
+        //});
+
+
+        //        return 1;
+        //        }
+        //        else
+        //            return null;
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //        throw;
+        //    }
+        //}
     }
+
 }

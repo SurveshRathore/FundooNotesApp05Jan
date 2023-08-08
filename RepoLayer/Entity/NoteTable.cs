@@ -13,11 +13,11 @@ namespace RepoLayer.Entity
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long NoteId { get; set; }
-        public string NoteTitle { get; set; }
-        public string NoteDesciption { get; set; }
+        public string? NoteTitle { get; set; }
+        public string? NoteDesciption { get; set; }
         public DateTime NoteReminder { get; set; }
-        public string NoteColor { get; set; }
-        public string NoteImage { get; set; }
+        public string? NoteColor { get; set; }
+        public string? NoteImage { get; set; }
         public bool NoteIsArchive { get; set; }
         public bool NoteIsPin { get; set; }
         public bool NoteIsTrash { get; set; }

@@ -1,4 +1,5 @@
-﻿using CommonLayer.Models;
+﻿using CommonLayer.Model;
+using CommonLayer.Models;
 using Microsoft.AspNetCore.Http;
 using RepoLayer.Entity;
 using System;
@@ -15,12 +16,22 @@ namespace ManagerLayer.Interface
         public List<NoteTable> GetAllNotes(long UserId);
 
         public bool UpdateNotes(long NoteId, long UserId, NotesModel notesModel);
-
+        public NoteTable UpdateColor(long NoteId, string color);
         public bool IsPinOrNot(long NoteId);
         public bool IsArchiveOrNot(long NoteId);
         public bool IsTrashOrNot(long NoteId);
-        public bool DeleteNote(long UserId, long NoteId);
-        public NoteTable UpdateColor(long NoteId, string Color);
+        public bool DeleteNote( long NoteId);
+        
         public string UploadImage(long NoteId, long UserId, IFormFile img);
+
+        public List<NoteTable> searchNote(string query);
+
+        public int GetNoteCount(int userId);
+
+        public int ColorNoteCount(int userId);
+
+        public int CountTrashNote(int userId);
+
+        public CountModel NoteAllCount(int userId);
     }
 }

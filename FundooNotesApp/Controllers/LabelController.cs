@@ -18,8 +18,8 @@ namespace FundooNotesApp.Controllers
         {
             this.IlabelBL = labelBL;
             this.fundooDBContext = fundooContext;
-
         }
+
         [HttpPost]
         [Route("AddNewLabel")]
         public IActionResult AddLabel(string LabelName, long NoteId)
@@ -38,9 +38,9 @@ namespace FundooNotesApp.Controllers
 
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex.InnerException;
+                throw;
             }
         }
 
@@ -62,9 +62,9 @@ namespace FundooNotesApp.Controllers
 
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex.InnerException;
+                throw;
             }
         }
 
@@ -74,7 +74,6 @@ namespace FundooNotesApp.Controllers
         {
             try
             {
-                
                 var result = IlabelBL.UpdateLabel(LabelId, NewLabelName);
                 if (result != null)
                 {
@@ -86,9 +85,9 @@ namespace FundooNotesApp.Controllers
 
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex.InnerException;
+                throw;
             }
         }
 
@@ -98,7 +97,6 @@ namespace FundooNotesApp.Controllers
         {
             try
             {
-                
                 var result = IlabelBL.DeleteLabel(LabelId);
                 if (result != null)
                 {
@@ -110,9 +108,9 @@ namespace FundooNotesApp.Controllers
 
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex.InnerException;
+                throw;
             }
         }
     }

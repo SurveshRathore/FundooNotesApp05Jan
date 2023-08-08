@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RepoLayer.Context;
-using RepoLayer.Entity;
 
 namespace FundooNotesApp.Controllers
 {
@@ -18,15 +17,15 @@ namespace FundooNotesApp.Controllers
         {
             this.IcollabBL = collabBL;
             this.fundooDBContext = fundooContext;
-
         }
+
         [HttpPost]
         [Route("AddNewCollab")]
         public IActionResult AddNewCollab(long NoteId, string Email)
         {
             try
             {
-                var UserId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "userID").Value);
+                var UserId = Convert.ToInt32(this.User.Claims.FirstOrDefault(e => e.Type == "userID").Value);
                 var result = IcollabBL.AddNewCollab(UserId, NoteId, Email);
                 if (result != null)
                 {
@@ -35,12 +34,11 @@ namespace FundooNotesApp.Controllers
                 else
                 {
                     return this.BadRequest(new { success = false, message = "label Adding Failed" });
-
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex.InnerException;
+                throw;
             }
         }
 
@@ -51,7 +49,7 @@ namespace FundooNotesApp.Controllers
             try
             {
 
-                var result = IcollabBL.GetAllCollab(NoteId);
+                var result = this.IcollabBL.GetAllCollab(NoteId);
                 if (result != null)
                 {
                     return this.Ok(new { success = true, message = "Getting All the collab", data = result });
@@ -59,25 +57,23 @@ namespace FundooNotesApp.Controllers
                 else
                 {
                     return this.BadRequest(new { success = false, message = "Failed to get the collab" });
-
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex.InnerException;
+                throw;
             }
         }
-    
 
         [HttpDelete]
         [Route("DeleteCollab")]
-        public IActionResult RemoveCollab(long CollabId)
+        public IActionResult RemoveCollab(long collabId)
         {
             try
             {
 
-                var result = IcollabBL.RemoveCollab(CollabId);
-                if (result != null)
+                var result = this.IcollabBL.RemoveCollab(collabId);
+                if (result == true)
                 {
                     return this.Ok(new { success = true, message = "Collab Deleted successfully", data = result });
                 }
@@ -87,9 +83,9 @@ namespace FundooNotesApp.Controllers
 
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex.InnerException;
+                throw;
             }
         }
     }

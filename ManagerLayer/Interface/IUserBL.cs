@@ -15,5 +15,9 @@ namespace ManagerLayer.Interface
 
         public string userPasswordFoget(string emailID);
         public bool userResetPassword(string emailID, string password, string confirmPass);
+
+        public string userPasswordFogetByRabbitMQ(string emailID);
+
+        public List<UserTable> GetAllUser();
     }
 }

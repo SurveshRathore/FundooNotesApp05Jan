@@ -79,6 +79,32 @@ namespace ManagerLayer.Service
 
         }
 
+        public List<UserTable> GetAllUser()
+        {
+            try
+            {
+                return this.userInterfaceRL.GetAllUser();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public string userPasswordFogetByRabbitMQ (string emailID)
+        {
+            try
+            {
+                return this.userInterfaceRL.userPasswordFogetByRabbitMQ(emailID);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
 
     }
 }

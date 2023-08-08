@@ -1,5 +1,6 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using CommonLayer.Model;
 using CommonLayer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -80,21 +81,70 @@ namespace RepoLayer.Service
 
         }
 
+        public NoteTable UpdateColor(long NoteId, string color)
+        {
+            try
+            {
+                //var updateColor = fundooDBContext.Notes.FirstOrDefault(n => n.NoteId == NoteId && n.userId == UserId);
+                var updateColor = fundooDBContext.Notes.FirstOrDefault(n => n.NoteId == NoteId);
+                if (updateColor != null)
+                {
+                    updateColor.NoteColor = color;
+                    updateColor.NoteModified = DateTime.Now;
+                    fundooDBContext.SaveChanges();
+                    return updateColor;
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public bool UpdateNotes(long NoteId, long UserId, NotesModel notesModel)
         {
             try
             {
-                var updatenotes = fundooDBContext.Notes.FirstOrDefault(n => n.NoteId == NoteId && n.userId == UserId);
-                if (updatenotes != null)
+                //var updatenotes = fundooDBContext.Notes.FirstOrDefault(n => n.NoteId == NoteId && n.userId == UserId);
+                //if (updatenotes != null)
+                //{
+                //    if (notesModel.NoteTitle != null)
+                //    {
+                //        updatenotes.NoteTitle = notesModel.NoteTitle;
+                //    }
+                //    if (notesModel.NoteDesciption != null)
+                //    {
+                //        updatenotes.NoteDesciption = notesModel.NoteDesciption;
+                //    }
+                //    if(notesModel.NoteColor != null)
+                //    {
+                //        updatenotes.NoteColor = notesModel.NoteColor;
+                //    }
+                //    else
+                //    {
+                //        updatenotes.NoteColor = "";
+                //    }
+                //    if (notesModel.NoteImage != null)
+                //    {
+                //        updatenotes.NoteImage = notesModel.NoteImage;
+                //    }
+                //    else
+                //    {
+                //        updatenotes.NoteImage = "";
+                //    }
+                var updatenotes = fundooDBContext.Notes.FirstOrDefault(n => n.NoteId == NoteId);
+                if(updatenotes != null)
                 {
-                    if (notesModel.NoteTitle != null)
-                    {
-                        updatenotes.NoteTitle = notesModel.NoteTitle;
-                    }
-                    if (notesModel.NoteDesciption != null)
-                    {
-                        updatenotes.NoteDesciption = notesModel.NoteDesciption;
-                    }
+                    updatenotes.NoteTitle = notesModel.NoteTitle;
+                    updatenotes.NoteDesciption = notesModel.NoteDesciption;
+                    updatenotes.NoteColor = notesModel.NoteColor;
+                    updatenotes.NoteImage = notesModel.NoteImage;
+                    updatenotes.NoteReminder = notesModel.NoteReminder;
                     updatenotes.NoteModified = DateTime.Now;
                     fundooDBContext.SaveChanges();
                     return true;
@@ -104,14 +154,14 @@ namespace RepoLayer.Service
                     return false;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
 
-        public bool DeleteNote(long UserId, long NoteId)
+        public bool DeleteNote( long NoteId)
         {
             try
             {
@@ -146,6 +196,7 @@ namespace RepoLayer.Service
                 else
                 {
                     result.NoteIsPin = false;
+                    fundooDBContext.SaveChanges();
                     return result.NoteIsPin;
                 }
             }
@@ -159,7 +210,7 @@ namespace RepoLayer.Service
             try
             {
                 NoteTable result = this.fundooDBContext.Notes.FirstOrDefault(x => x.NoteId == NoteId);
-                if (result.NoteIsArchive == false)
+                if (result != null)
                 {
                     result.NoteIsArchive = true;
                     fundooDBContext.SaveChanges();
@@ -167,8 +218,9 @@ namespace RepoLayer.Service
                 }
                 else
                 {
-                    result.NoteIsArchive = false;
-                    return result.NoteIsArchive;
+                    //result.NoteIsArchive = true;
+                    //return result.NoteIsArchive;
+                    return false;
                 }
             }
             catch (Exception ex)
@@ -181,16 +233,18 @@ namespace RepoLayer.Service
             try
             {
                 NoteTable result = fundooDBContext.Notes.FirstOrDefault(x => x.NoteId == NoteId);
-                if (result.NoteIsTrash == false)
+                if (result != null)
                 {
+                    //result.NoteIsTrash = !result.NoteIsTrash;
                     result.NoteIsTrash = true;
                     fundooDBContext.SaveChanges();
                     return result.NoteIsTrash;
                 }
                 else
                 {
-                    result.NoteIsTrash = false;
-                    return result.NoteIsTrash;
+                    //result.NoteIsTrash = !result.NoteIsTrash;
+                    //result.NoteIsTrash = true;
+                    return false;
                 }
             }
             catch (Exception ex)
@@ -198,27 +252,27 @@ namespace RepoLayer.Service
                 throw ex;
             }
         }
-        public NoteTable UpdateColor(long NoteId, string Color)
-        {
-            try
-            {
-                var result = this.fundooDBContext.Notes.FirstOrDefault(e => e.NoteId == NoteId);
-                if (result != null)
-                {
-                    result.NoteColor = Color;
-                    fundooDBContext.SaveChanges();
-                    return result;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //public NoteTable UpdateColor(long NoteId, string Color)
+        //{
+        //    try
+        //    {
+        //        var result = this.fundooDBContext.Notes.FirstOrDefault(e => e.NoteId == NoteId);
+        //        if (result != null)
+        //        {
+        //            result.NoteColor = Color;
+        //            fundooDBContext.SaveChanges();
+        //            return result;
+        //        }
+        //        else
+        //        {
+        //            return null;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
         public string UploadImage(long NoteId, long UserId, IFormFile img)
         {
@@ -257,6 +311,89 @@ namespace RepoLayer.Service
             {
                 throw ex;
             }
+        }
+
+        public List<NoteTable> searchNote(string query)
+        {
+            try
+            {
+                var fundooNotes = fundooDBContext.Notes.Where(notes => notes.NoteTitle.Contains(query)).ToList();
+
+                if(fundooNotes != null)
+                {
+                    return fundooNotes;
+                }
+                else
+                {
+                    return null;
+                }
+               
+            }
+            catch(Exception)
+            {
+                throw;
+            }
+        }
+
+
+
+        public int GetNoteCount(int userId)
+        {
+            try
+            {
+                int count = this.fundooDBContext.Notes.Where(u => u.userId == userId).Count();
+                return count;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public int ColorNoteCount(int userId)
+        {
+            try
+            {
+                //int count = this.fundooDBContext.Notes.Where(u => u.NoteColor != "" ).Count();
+                //int count = this.fundooDBContext.Notes.Where(u => u.NoteColor != "" && u.NoteColor != "NULL").Count();
+                int count = this.fundooDBContext.Notes.Where(u => u.userId == userId && u.NoteColor != "" && u.NoteColor != null).Count();
+
+                
+                return count;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public int CountTrashNote(int userId)
+        {
+            try
+            {
+                int count = this.fundooDBContext.Notes.Where(u => u.userId == userId && u.NoteIsTrash == true).Count();
+
+                return count;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
+        }
+
+        public CountModel NoteAllCount(int userId)
+        {
+            CountModel countModel = new CountModel();
+            countModel.NoteCount = this.fundooDBContext.Notes.Where(u => u.userId == userId).Count();
+            countModel.TrashNoteCount = this.fundooDBContext.Notes.Where(u => u.userId == userId && u.NoteIsTrash == true).Count();
+            countModel.ColorNoteCount = this.fundooDBContext.Notes.Where(u => u.userId == userId && u.NoteColor != null).Count();
+            countModel.ArchiveCount = this.fundooDBContext.Notes.Where(u => u.userId == userId && u.NoteIsArchive != null).Count();
+
+            return countModel;
         }
 
     }

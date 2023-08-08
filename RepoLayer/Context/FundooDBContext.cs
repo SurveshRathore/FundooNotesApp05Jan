@@ -16,5 +16,11 @@ namespace RepoLayer.Context
         public DbSet<NoteTable> Notes { get; set; }
         public DbSet<LabelTable> LabelTable { get; set; }
         public DbSet<CollabTable> CollabTables { get; set; }
+
+        public DbSet<ReviewTable> ReviewTable { get; set; }
+        public DbSet<StudentTable> StudentTables { get; set; }
+        public DbSet<StudentTable> StudentTablesm { get; set; }
+
+        public DbSet<OrdeTable> ordeTables { get; set; }
     }
 }

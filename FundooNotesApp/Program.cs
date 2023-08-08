@@ -45,6 +45,8 @@ try
                 Type = ReferenceType.SecurityScheme
             }
         };
+
+
         c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
 
         c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -71,6 +73,10 @@ try
         };
     });
 
+    //builder.Services.AddSession(newSession =>
+    //{
+    //    newSession.IdleTimeout = TimeSpan.FromMinutes(30);
+    //});
 
     builder.Services.AddTransient<IUserBL, UserBL>();
     builder.Services.AddTransient<IUserRL, UserRL>();
@@ -80,6 +86,22 @@ try
     builder.Services.AddTransient<ILabelRL, LabelRL>();
     builder.Services.AddTransient<ICollabBL, CollabBL>();
     builder.Services.AddTransient<ICollabRL, CollabRL>();
+    builder.Services.AddTransient<IReviewBL, ReviewBL>();
+    builder.Services.AddTransient<IReviewRL, ReviewRL>();
+    builder.Services.AddTransient<IOrderTestBL, OrdertestBL>();
+    builder.Services.AddTransient<IOrderTestRL, OrderTestRL>();
+
+    
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(
+            name: "AllowOrigin",
+            builder =>
+            {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            });
+    });
 
     //logger code for nlog
     builder.Logging.ClearProviders();
@@ -106,11 +128,12 @@ try
     app.UseHttpsRedirection();
     //logger code for nlog
     app.UseStaticFiles();
-    
 
+    app.UseCors("AllowOrigin");
     app.UseAuthentication();
     app.UseAuthorization();
 
+    //app.UseSession();
     app.MapControllers();
 
     app.MapControllerRoute(
