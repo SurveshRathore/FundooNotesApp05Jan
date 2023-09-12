@@ -4,6 +4,8 @@ using Experimental.System.Messaging;
 using ManagerLayer.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 using NLog.Targets;
 using RepoLayer.Context;
 using RepoLayer.Entity;
@@ -20,12 +22,16 @@ namespace FundooNotesApp.Controllers
         private readonly FundooDBContext fundooDBContext;
         private readonly ILogger<NoteController> _logger;
 
-        public NoteController(FundooDBContext fundooContext, INoteBL nodeBL, ILogger<NoteController> log)
+        // for radis
+        private readonly IDistributedCache distributedCache;
+
+        public NoteController(FundooDBContext fundooContext, INoteBL nodeBL, ILogger<NoteController> log, IDistributedCache distributedCache)
         {
             this.InodeBL = nodeBL;
             this.fundooDBContext = fundooContext;
+            this.distributedCache = distributedCache;
             this._logger = log;
-            _logger.LogDebug("Nlog injected with the NoteController");
+            this._logger.LogDebug("Nlog injected with the NoteController");
         }
 
         [HttpPost]
@@ -34,7 +40,7 @@ namespace FundooNotesApp.Controllers
             {
                 try
                 {
-                    //long UserId = Convert.ToInt32(U.Claims.FirstOrDefault(e => e.Type == "userId").Value);
+                    // long UserId = Convert.ToInt32(U.Claims.FirstOrDefault(e => e.Type == "userId").Value);
                     long UserId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "userID").Value);
                     var result = InodeBL.AddNewNote(notesModel, UserId);
                     if (result != null)
@@ -52,30 +58,88 @@ namespace FundooNotesApp.Controllers
                 }
         }
 
-        [HttpGet("GetAllNotes")]
-        public IActionResult GetAllNotes()
+        // [HttpGet("GetAllNotes")]
+        // public IActionResult GetAllNotes()
+        //    {
+        //        try
+        //        {
+        //            long UserId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "userID").Value);
+        //            var result = InodeBL.GetAllNotes(UserId);
+
+        //             if (result != null)
+        //            {
+        //                _logger.LogInformation("fetching the Notes");
+        //                return this.Ok(new { success = true, message = "Successfully fetched the Notes", data = result });
+        //            }
+        //            else
+        //            {
+        //                _logger.LogInformation("Unable to fetch the Notes");
+        //                return this.BadRequest(new { success = false, message = "Failed To Load Notes" });
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //        _logger.LogInformation(ex.ToString());
+        //        throw ex;
+        //        }
+        // }
+
+
+        // GetAllNotes method for radis cache
+        [Authorize]
+        [HttpGet]
+        [Route("GetAllNotes")]
+        public async Task <IActionResult> GetAllNotes()
+        {
+            try
             {
-                try
+                var cacheKey = $"noteList_{User.FindFirst("userID").Value}";   // defining the key and value
+                var serializedNotesList = await distributedCache.GetStringAsync(cacheKey);
+
+                List<NoteTable> notesList;
+
+                if(serializedNotesList != null)
+                {
+                    notesList = JsonConvert.DeserializeObject<List<NoteTable>>(serializedNotesList);
+                }
+                else
                 {
                     long UserId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "userID").Value);
-                    var result = InodeBL.GetAllNotes(UserId);
 
-                     if (result != null)
-                    {
-                        _logger.LogInformation("fetching the Notes");
-                        return this.Ok(new { success = true, message = "Successfully fetched the Notes", data = result });
-                    }
-                    else
-                    {
-                        _logger.LogInformation("Unable to fetch the Notes");
-                        return this.BadRequest(new { success = false, message = "Failed To Load Notes" });
-                    }
+                    // var userIdClaim = User.FindFirst("UserId");
+                    // if (userIdClaim != null && long.TryParse(userIdClaim.Value, out long userId))
+                    // {
+                    notesList = InodeBL.GetAllNotes(UserId);
+                    serializedNotesList = JsonConvert.SerializeObject(notesList);
+
+                    await distributedCache.SetStringAsync(
+                        cacheKey, 
+                        serializedNotesList,
+                        new DistributedCacheEntryOptions
+                        {
+                            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10),
+                            SlidingExpiration = TimeSpan.FromMinutes(2),
+                        });
                 }
-                catch (Exception ex)
+                if (notesList != null)
                 {
-                _logger.LogInformation(ex.ToString());
-                throw ex;
+                    this._logger.LogInformation("fetching the Notes");
+                    return this.Ok(new { success = true, message = "Successfully fetched the Notes", data = notesList });
                 }
+                else
+                {
+                    this._logger.LogInformation("Unable to fetch the Notes");
+                    return this.BadRequest(new { success = false, message = "Failed To Load Notes" });
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogInformation(ex.ToString());
+                throw;
+            }
         }
 
         [HttpPut("updateColor")]
@@ -83,7 +147,7 @@ namespace FundooNotesApp.Controllers
         {
             try
             {
-                //long UserId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "userID").Value);
+                // long UserId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "userID").Value);
                 var result = InodeBL.UpdateColor(NoteId, color);
                 if (result != null)
                 {
@@ -128,7 +192,7 @@ namespace FundooNotesApp.Controllers
         {
             try
             {
-                //long UserId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "userID").Value);
+                // long UserId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "userID").Value);
                 var result = InodeBL.DeleteNote(NoteId);
                 if (result != null)
                 {
@@ -150,7 +214,7 @@ namespace FundooNotesApp.Controllers
         {
             try
             {
-                var result = InodeBL.IsPinOrNot(NoteId);
+                var result = this.InodeBL.IsPinOrNot(NoteId);
                 if (result != null)
                 {
                     return this.Ok(new { success = true, message = "Note Pinned Successfully", Response = result });

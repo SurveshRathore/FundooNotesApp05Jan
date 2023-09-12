@@ -20,6 +20,11 @@ try
 
     // Add services to the container.
 
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = "localhost:6379"; //port of redis cache server
+    });
+
     builder.Services.AddControllers();
     builder.Services.AddDbContext<FundooDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FundooDB")));
 
