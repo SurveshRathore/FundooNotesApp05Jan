@@ -21,6 +21,7 @@ namespace RepoLayer.Context
         public DbSet<StudentTable> StudentTables { get; set; }
         public DbSet<StudentTable> StudentTablesm { get; set; }
 
+
         public DbSet<OrdeTable> ordeTables { get; set; }
     }
 }
