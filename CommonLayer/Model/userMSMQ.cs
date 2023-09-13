@@ -12,6 +12,7 @@ namespace CommonLayer.Model
     public class userMSMQ
     {
         MessageQueue queue = new MessageQueue();
+        
         private string receiverName;
         private string receiverEmailID;
 
