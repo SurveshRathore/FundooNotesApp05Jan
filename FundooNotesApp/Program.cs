@@ -1,5 +1,7 @@
+using System.Text;
 using ManagerLayer.Interface;
 using ManagerLayer.Service;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -9,7 +11,6 @@ using NLog.Web;
 using RepoLayer.Context;
 using RepoLayer.Interface;
 using RepoLayer.Service;
-using System.Text;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 logger.Debug("init main");
@@ -18,16 +19,32 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    // Add services to the container.
-
+    // For raddis cache
     builder.Services.AddStackExchangeRedisCache(options =>
     {
-        options.Configuration = "localhost:6379"; //port of redis cache server
+        options.Configuration = "localhost:6379"; // port of redis cache server
     });
 
-    builder.Services.AddControllers();
+    // Add database 
     builder.Services.AddDbContext<FundooDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FundooDB")));
 
+    // RabbitMQ Configuration for Producer
+    builder.Services.AddMassTransit(x =>
+    {
+        x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
+        {
+            config.UseHealthCheck(provider);
+            config.Host(new Uri("rabbitmq://localhost"), h =>
+            {
+                h.Username("guest");
+                h.Password("guest");
+            });
+        }));
+    });
+    builder.Services.AddMassTransitHostedService();
+
+    // Add services to the container.
+    builder.Services.AddControllers();
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
@@ -47,16 +64,15 @@ try
             Reference = new OpenApiReference
             {
                 Id = JwtBearerDefaults.AuthenticationScheme,
-                Type = ReferenceType.SecurityScheme
-            }
+                Type = ReferenceType.SecurityScheme,
+            },
         };
-
 
         c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
 
         c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-                 { jwtSecurityScheme, Array.Empty<string>() }
+                 { jwtSecurityScheme, Array.Empty<string>() },
                 });
     });
     var tokenKey = builder.Configuration.GetValue<string>("Jwt:Key");
@@ -74,15 +90,14 @@ try
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(key),
             ValidateIssuer = false,
-            ValidateAudience = false
+            ValidateAudience = false,
         };
     });
 
-    //builder.Services.AddSession(newSession =>
-    //{
+    // builder.Services.AddSession(newSession =>
+    // {
     //    newSession.IdleTimeout = TimeSpan.FromMinutes(30);
-    //});
-
+    // });
     builder.Services.AddTransient<IUserBL, UserBL>();
     builder.Services.AddTransient<IUserRL, UserRL>();
     builder.Services.AddTransient<INoteBL, NoteBL>();
@@ -96,8 +111,6 @@ try
     builder.Services.AddTransient<IOrderTestBL, OrdertestBL>();
     builder.Services.AddTransient<IOrderTestRL, OrderTestRL>();
 
-    
-
     builder.Services.AddCors(options =>
     {
         options.AddPolicy(
@@ -108,11 +121,11 @@ try
             });
     });
 
-    //logger code for nlog
+    // logger code for nlog
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
 
-    ///----------- bulider app --------
+    // ----------- bulider app --------
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
@@ -122,23 +135,23 @@ try
         app.UseSwaggerUI();
     }
 
-    //logger code for nlog
+    // logger code for nlog
     if (!app.Environment.IsDevelopment())
     {
         app.UseExceptionHandler("Home/Error");
-        //The default HSTS value is 30 days. you may want to change this for the production scenarios.
+        // The default HSTS value is 30 days. you may want to change this for the production scenarios.
         app.UseHsts();
     }
 
     app.UseHttpsRedirection();
-    //logger code for nlog
+    // logger code for nlog
     app.UseStaticFiles();
 
     app.UseCors("AllowOrigin");
     app.UseAuthentication();
     app.UseAuthorization();
 
-    //app.UseSession();
+    // app.UseSession();
     app.MapControllers();
 
     app.MapControllerRoute(
@@ -149,8 +162,6 @@ try
         pattern: "{controller=Home}/{action=Index}/{id?}");
 
     app.Run();
-
-
 }
 catch (Exception ex)
 {
@@ -161,6 +172,3 @@ finally
 {
     NLog.LogManager.Shutdown();
 }
-
-
-

@@ -4,6 +4,7 @@
     using CommonLayer.Model;
     using Experimental.System.Messaging;
     using ManagerLayer.Interface;
+    using MassTransit;
     using Microsoft.AspNetCore.Mvc;
     using RepoLayer.Entity;
     using StackExchange.Redis;
@@ -14,12 +15,14 @@
     {
         private readonly IUserBL userBL;
         private readonly ILogger<UserController> _logger;
+        private readonly IBus bus;
 
-        public UserController( IUserBL userBl, ILogger<UserController> log)
+        public UserController( IUserBL userBl, ILogger<UserController> log, IBus bus)
         {
 
-            this.userBL = userBl ;
+            this.userBL = userBl;
             this._logger = log;
+            this.bus = bus;
         }
 
         [HttpPost]
@@ -93,16 +96,47 @@
             }
         }
 
+        //[HttpPost]
+        //[Route("api/ForgetPassword")]
+        //public IActionResult userForget ( string email)
+        //{
+        //    try
+        //    {
+        //        var result = userBL.userPasswordFoget(email);
+        //        if (result != null)
+        //        {
+        //            return this.Ok(new { sucess = true, message = "Forget password mail send Successfully." , response= result});
+        //        }
+        //        else
+        //        {
+        //            return this.BadRequest(new { sucess = false, message = "Email not found" });
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return this.BadRequest(new { sucess = false, message = ex.Message });
+        //    }
+        //}
+
+
+        // For Rabbit MQ
         [HttpPost]
         [Route("api/ForgetPassword")]
-        public IActionResult userForget ( string email)
+        public async Task<IActionResult> userForget(string email)
         {
             try
             {
-                var result = userBL.userPasswordFoget(email);
+                var result = this.userBL.userPasswordFoget(email);
                 if (result != null)
                 {
-                    return this.Ok(new { sucess = true, message = "Forget password mail send Successfully." , response= result});
+                    ConsumerEmail consumerEmailModel = new ConsumerEmail();
+                    consumerEmailModel.Email = email;
+                    consumerEmailModel.Token = result.ToString();
+                    Uri uri = new Uri("rabbitmq://localhost/MailQueue");
+                    var endpoint = await bus.GetSendEndpoint(uri);
+                    await endpoint.Send(consumerEmailModel);
+                    return this.Ok(new { sucess = true, message = "Forget password mail send Successfully.", response = result });
                 }
                 else
                 {

@@ -34,6 +34,11 @@ namespace FundooNotesApp.Controllers
             this._logger.LogDebug("Nlog injected with the NoteController");
         }
 
+        /// <summary>
+        /// Add a new note.
+        /// </summary>
+        /// <param name="notesModel">model of note.</param>
+        /// <returns>Note added or failed.</returns>
         [HttpPost]
         [Route("AddNewNotes")]
         public IActionResult AddNewNotes(NotesModel notesModel)
@@ -104,15 +109,15 @@ namespace FundooNotesApp.Controllers
                 }
                 else
                 {
-                    long UserId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "userID").Value);
+                    long UserId = Convert.ToInt32(this.User.Claims.FirstOrDefault(e => e.Type == "userID").Value);
 
                     // var userIdClaim = User.FindFirst("UserId");
                     // if (userIdClaim != null && long.TryParse(userIdClaim.Value, out long userId))
                     // {
-                    notesList = InodeBL.GetAllNotes(UserId);
+                    notesList = this.InodeBL.GetAllNotes(UserId);
                     serializedNotesList = JsonConvert.SerializeObject(notesList);
 
-                    await distributedCache.SetStringAsync(
+                    await this.distributedCache.SetStringAsync(
                         cacheKey, 
                         serializedNotesList,
                         new DistributedCacheEntryOptions
@@ -148,7 +153,7 @@ namespace FundooNotesApp.Controllers
             try
             {
                 // long UserId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "userID").Value);
-                var result = InodeBL.UpdateColor(NoteId, color);
+                var result = this.InodeBL.UpdateColor(NoteId, color);
                 if (result != null)
                 {
                     return this.Ok(new { success = true, message = "Updating color in Note", data = result });

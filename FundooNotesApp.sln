@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FundooNotesApp", "FundooNotesApp\FundooNotesApp.csproj", "{52E47F94-F72A-4672-9874-6E40B56637AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FundooNotesApp", "FundooNotesApp\FundooNotesApp.csproj", "{52E47F94-F72A-4672-9874-6E40B56637AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepoLayer", "RepoLayer\RepoLayer.csproj", "{AB5673C3-D75F-409F-8AEB-199CED8071CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepoLayer", "RepoLayer\RepoLayer.csproj", "{AB5673C3-D75F-409F-8AEB-199CED8071CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonLayer", "CommonLayer\CommonLayer.csproj", "{FA8D28F3-0B47-44C5-9050-1776FEF236DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonLayer", "CommonLayer\CommonLayer.csproj", "{FA8D28F3-0B47-44C5-9050-1776FEF236DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagerLayer", "ManagerLayer\ManagerLayer.csproj", "{A8D410AA-9B94-4A2E-9518-7D386A1B9BC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagerLayer", "ManagerLayer\ManagerLayer.csproj", "{A8D410AA-9B94-4A2E-9518-7D386A1B9BC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendEmail", "SendEmail\SendEmail.csproj", "{CBA3B218-6A1D-4F32-BF1B-7ECD9BADC1FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{A8D410AA-9B94-4A2E-9518-7D386A1B9BC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8D410AA-9B94-4A2E-9518-7D386A1B9BC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8D410AA-9B94-4A2E-9518-7D386A1B9BC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBA3B218-6A1D-4F32-BF1B-7ECD9BADC1FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBA3B218-6A1D-4F32-BF1B-7ECD9BADC1FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBA3B218-6A1D-4F32-BF1B-7ECD9BADC1FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBA3B218-6A1D-4F32-BF1B-7ECD9BADC1FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
