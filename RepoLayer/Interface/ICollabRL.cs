@@ -10,6 +10,7 @@ namespace RepoLayer.Interface
     public interface ICollabRL
     {
         public CollabTable AddNewCollab(long UserId, long NoteId, string Email);
+        
         public List<CollabTable> GetAllCollab(long NoteId);
         public bool RemoveCollab(long CollabId);
     }
