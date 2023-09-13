@@ -27,7 +27,6 @@ namespace RepoLayer.Service
         }
         public NoteTable AddNewNote(NotesModel notesModel, long UserId)
         {
-
             try
             {
                 NoteTable notes = new NoteTable();
