@@ -10,6 +10,7 @@ namespace RepoLayer.Entity
 {
     public class CollabTable
     {
+        
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long CollabId { get; set; }

@@ -8,6 +8,7 @@ namespace CommonLayer.Model
 {
     public class CountModel
     {
+        
         public int NoteCount {  get; set; }
         public int ArchiveCount { get; set; }
 

@@ -13,6 +13,7 @@ namespace RepoLayer.Entity
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long ReviewID {get; set;}
+        
         public string ReviewComment {get; set;}
         public int ReviewRating { get; set; } 
 

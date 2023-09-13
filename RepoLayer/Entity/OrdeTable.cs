@@ -11,6 +11,7 @@ namespace RepoLayer.Entity
     {
         [Key]
         public int OrderID { get; set; }
+        
         public int UserID { get; set; }
         public String ProductName { get; set; }
         public int Quantity { get; set; }

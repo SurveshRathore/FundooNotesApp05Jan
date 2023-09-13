@@ -13,6 +13,7 @@ namespace RepoLayer.Entity
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long NoteId { get; set; }
+        
         public string? NoteTitle { get; set; }
         public string? NoteDesciption { get; set; }
         public DateTime NoteReminder { get; set; }
