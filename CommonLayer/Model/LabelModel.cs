@@ -10,6 +10,7 @@ namespace CommonLayer.Model
     public class LabelModel
     {
         public long LabelId { get; set; }
+        
         public string LabelName { get; set; }
 
         public long userId { get; set; }
