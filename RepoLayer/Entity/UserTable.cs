@@ -14,6 +14,7 @@ namespace RepoLayer.Entity
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)] //generated userid value one by one
         //user table
         public long userId { get; set; }
+        
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string EmailId { get; set; }

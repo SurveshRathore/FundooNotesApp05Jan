@@ -95,6 +95,7 @@ namespace RepoLayer.Service
                     fundooDBContext.LabelTable.Remove(result);
                     fundooDBContext.SaveChanges();
                     return true;
+                    
                 }
                 else
                 {

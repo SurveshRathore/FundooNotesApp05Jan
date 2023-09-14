@@ -13,6 +13,7 @@ namespace RepoLayer.Interface
     public interface INotesRL
     {
         public NoteTable AddNewNote(NotesModel notesModel, long UserId);
+        
         public List<NoteTable> GetAllNotes(long UserId);
 
         public bool UpdateNotes(long NoteId, long UserId, NotesModel notesModel);

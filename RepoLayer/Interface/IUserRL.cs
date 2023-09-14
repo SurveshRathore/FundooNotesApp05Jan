@@ -11,6 +11,7 @@ namespace RepoLayer.Interface
     public interface IUserRL
     {
         public UserTable UserRegitration(UserRegistration userRegistration);
+        
         public string userLogin(UserLogin uLogin);
         public string userPasswordFoget(string emailID);
         public bool userPasswordReset(string emailID, string password, string confirmPassword);

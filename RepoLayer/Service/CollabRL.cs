@@ -14,7 +14,6 @@ namespace RepoLayer.Service
     {
         private readonly FundooDBContext fundooDBContext;
         
-
         public CollabRL(FundooDBContext fundooDB)
         {
             this.fundooDBContext = fundooDB;
