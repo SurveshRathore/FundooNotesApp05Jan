@@ -11,7 +11,7 @@ namespace SendEmail.Mail
         {
             var data = context.Message; // containg data which is consume
             string email = data.Email;
-            string receiverName = "hello";
+            string receiverName = "Mr Hello";
             string token = data.Token;
             //string token = data.Token.ToString();
             string subject = "Fundoo password Reset link";

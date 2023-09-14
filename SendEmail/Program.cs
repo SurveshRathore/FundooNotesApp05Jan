@@ -13,8 +13,8 @@ builder.Services.AddMassTransit(x =>
         cfg.UseHealthCheck(provider);
         cfg.Host(new Uri("rabbitmq://localhost"), h =>
         {
-            h.Username("guest");
-            h.Password("guest");
+            h.Username("guest"); //username
+            h.Password("guest"); //password
         });
         cfg.ReceiveEndpoint("MailQueue", ep =>
         {

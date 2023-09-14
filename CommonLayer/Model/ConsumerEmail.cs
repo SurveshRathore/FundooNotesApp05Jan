@@ -8,7 +8,10 @@ namespace CommonLayer.Model
 {
     public class ConsumerEmail
     {
+        // To store Email
         public string Email { get; set; }
+
+        // To store Token
         public string Token { get; set; }
     }
 }

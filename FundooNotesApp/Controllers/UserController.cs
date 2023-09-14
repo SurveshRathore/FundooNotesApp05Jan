@@ -127,14 +127,18 @@
         {
             try
             {
+                // Get the token from repo layer
                 var result = this.userBL.userPasswordFoget(email);
                 if (result != null)
                 {
                     ConsumerEmail consumerEmailModel = new ConsumerEmail();
+                    // set the email to model
                     consumerEmailModel.Email = email;
+                    // set the token to model
                     consumerEmailModel.Token = result.ToString();
                     Uri uri = new Uri("rabbitmq://localhost/MailQueue");
                     var endpoint = await bus.GetSendEndpoint(uri);
+                    // send the model to consume
                     await endpoint.Send(consumerEmailModel);
                     return this.Ok(new { sucess = true, message = "Forget password mail send Successfully.", response = result });
                 }

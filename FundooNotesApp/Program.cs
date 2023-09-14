@@ -36,7 +36,7 @@ try
             config.UseHealthCheck(provider);
             config.Host(new Uri("rabbitmq://localhost"), h =>
             {
-                h.Username("guest");
+                h.Username("guest"); // username
                 h.Password("guest");
             });
         }));
